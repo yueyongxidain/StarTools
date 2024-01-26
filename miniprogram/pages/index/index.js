@@ -12,6 +12,7 @@ Page({
     listDataSuccess: false,
     isShowBottomAd: false,
     classlist: [],
+    inputValue: ''
   },
 
   /**
@@ -49,31 +50,34 @@ Page({
   onShareAppMessage: function () {},
   onShareTimeline: function () {},
 
-  //点击列表跳转
-  async selectTop(event) {
-
-    let item = event.currentTarget.dataset.id;
-    let path = item.path
-    // path = "/pages/my_module/forbes/index";
-
-    if (path == null || path == "") {
+  //点击提交生成请求
+  async submitGenerateImage(event) {
+    console.log(1111, this.data.inputValue)
+    if(!this.data.inputValue){
       wx.showToast({
-        title: item.name + ",模块已下线!",
+        title: "请输入你的绘图描述",
         icon: "none"
       })
     }
-
-    wx.navigateTo({
-      url: path,
-      fail(err) {
-        wx.showToast({
-          title: '上线中...',
-          icon: "none"
-        })
+    // TODO 提交请求
+    wx.request({
+      url: 'http://localhost:5001/aliai/generateimage', //仅为示例，并非真实的接口地址
+      data: {
+        prompt: this.data.inputValue
+      },
+      method:'POST',
+      header: {
+        'content-type': 'application/json' // 默认值
+      },
+      success (res) {
+        console.log(res.data)
       }
     })
   },
-
+  getInputValue(e){
+    this.data.inputValue = e.detail.value
+    console.log(this.data.inputValue)// {value: "ff", cursor: 2}  
+  },
   //获取功能列表
   getListInfo() {
     let _this = this;
